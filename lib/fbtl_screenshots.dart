@@ -3,7 +3,6 @@ library fbtl_screenshots;
 import 'dart:io' show File, Platform;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'fbtl_screenshots_platform_interface.dart';
@@ -13,7 +12,6 @@ import 'fbtl_screenshots_platform_interface.dart';
 class FBTLScreenshots {
   static const kTimeout = Duration(seconds: 10);
   static const kTimeoutResult = <int>[];
-  final _binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   bool _connected = false;
 
   /// Warms up the connection to the screenshot handler.
@@ -36,23 +34,12 @@ class FBTLScreenshots {
     }
     if (Platform.isAndroid) {
       return _takeAndroidScreenshot(tester, name);
-    } else if (Platform.isIOS) {
-      return _takeIOSScreenshot(tester, name);
     } else {
       throw FBTLScreenshotsException(
           'Unsupported platform ${Platform.operatingSystem}');
     }
   }
 
-  Future<void> _takeIOSScreenshot(WidgetTester tester, String name) async {
-    final bytes = await _binding
-        .takeScreenshot(name)
-        .timeout(kTimeout, onTimeout: () => kTimeoutResult);
-    if (bytes == kTimeoutResult) {
-      throw FBTLScreenshotsException(
-          'IntegrationTestWidgetsFlutterBinding.takeScreenshot took longer than $kTimeout');
-    }
-  }
 
   Future<void> _takeAndroidScreenshot(WidgetTester tester, String name) async {
     final extStorage = await getExternalStorageDirectory();
