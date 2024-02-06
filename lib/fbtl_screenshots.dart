@@ -24,6 +24,9 @@ class FBTLScreenshots {
     }
   }
 
+  /// iOS screenshot feature was removed due to binding conflict with Patrol v3.0 library
+  /// [APP-3638] https://wehealth.atlassian.net/browse/APP-3638
+
   /// Takes a screenshot with the given name.
   /// On iOS, the resulting screenshot is attached to the xctest results.
   /// On Android, the screenshot is written to the external storage directory.
