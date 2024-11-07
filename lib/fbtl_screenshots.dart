@@ -30,29 +30,30 @@ class FBTLScreenshots {
   /// Takes a screenshot with the given name.
   /// On iOS, the resulting screenshot is attached to the xctest results.
   /// On Android, the screenshot is written to the external storage directory.
-  Future<void> takeScreenshot(WidgetTester tester, String name) async {
+  Future<void> takeScreenshot(String name) async {
     if (!_connected) {
       throw FBTLScreenshotsException(
           'Call connect() before taking screenshots');
     }
     if (Platform.isAndroid) {
-      return _takeAndroidScreenshot(tester, name);
+      return _takeAndroidScreenshot(name);
     } else {
       throw FBTLScreenshotsException(
           'Unsupported platform ${Platform.operatingSystem}');
     }
   }
 
-
-  Future<void> _takeAndroidScreenshot(WidgetTester tester, String name) async {
+  Future<void> _takeAndroidScreenshot(String name) async {
     final extStorage = await getExternalStorageDirectory();
     if (extStorage == null) {
       throw FBTLScreenshotsException('No external storage directory');
     }
-    final bytes = await FBTLScreenshotsPlatform.instance.takeScreenshot()
+    final bytes = await FBTLScreenshotsPlatform.instance
+        .takeScreenshot()
         .timeout(kTimeout, onTimeout: () => kTimeoutResult);
     if (bytes == null) {
-      throw FBTLScreenshotsException('Unexpected fbtl_screenshots failure with no error message');
+      throw FBTLScreenshotsException(
+          'Unexpected fbtl_screenshots failure with no error message');
     }
     if (bytes == kTimeoutResult) {
       throw FBTLScreenshotsException(
